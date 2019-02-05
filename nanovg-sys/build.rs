@@ -4,6 +4,16 @@ use std::env;
 use std::path::Path;
 use std::process::Command;
 
+#[cfg(feature = "gles2")]
+fn print_android_gl() {
+    println!("cargo:rustc-link-lib=GLESv2");
+}
+
+#[cfg(feature = "gles3")]
+fn print_android_gl() {
+    println!("cargo:rustc-link-lib=GLESv3");
+}
+
 fn build_library(backend_macro: &str) {
     let target = env::var("TARGET").unwrap();
     let mut config = cc::Build::new();
@@ -17,7 +27,11 @@ fn build_library(backend_macro: &str) {
     config.file("nanovg/src/nanovg.c");
     config.file("nanovg_shim.c");
     config.define(backend_macro, None);
-    if target.contains("linux") {
+
+    if target.contains("android") {
+        #[cfg(any(feature = "gles2", feature = "gles3"))]
+        {print_android_gl();}
+    } else if target.contains("linux") {
         println!("cargo:rustc-link-lib=GL");
     } else if target.contains("darwin") {
         println!("cargo:rustc-link-lib=framework=OpenGL");

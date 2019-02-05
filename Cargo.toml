@@ -10,6 +10,9 @@ keywords = ["nanovg", "bindings", "vector", "graphics", "opengl"]
 categories = ["rendering::graphics-api", "games", "gui"]
 license = "MIT/Zlib"
 
+[workspace]
+members = ["nanovg-sys"]
+
 [package.metadata.docs.rs]
 features = ["gl3"]
 
